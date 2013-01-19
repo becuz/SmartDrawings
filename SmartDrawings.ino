@@ -2,6 +2,9 @@
   Trigger a Restmote command touching pin-attached pencil figures.
   Works on an Arduino Ethernet or a Ethernet Shield.
   
+  When something touches a pencil drawning attached to a pin, the value returned by the function uint8_t readCapacitivePin changes. 
+  If it's bigger than the costant touchedCutoff, makes the Restmote http request associated with that pin.
+  
   See http://www.restmote.com/ for details.
   Credits for the uint8_t readCapacitivePin function: http://www.instructables.com/id/Turn-a-pencil-drawing-into-a-capacitive-sensor-for/ 
 */
@@ -10,7 +13,7 @@
 
 const int ledPin = 9;                             // pin of connection led
 const int numPins = 6;                            // num of pins to connect to your drawing, ie size of capSensePins
-const int capSensePins[] = {2, 3, 4, 5, 6, 7, 8}; // pins to connect to your drawing
+const int capSensePins[] = {2, 3, 4, 5, 6, 7};    // pins to connect to your drawing
 const char* calls[] = {                           // calls associated to each pin
   "/api/pc/keyboard/1", 
   "/api/pc/keyboard/2",
@@ -128,6 +131,12 @@ void remoskoSendCommands(int index) {
   }  else {
     Serial.println("connection failed, disconnecting.");
     client.stop();
+//    for(int i=0;i<2;i++){  //signals the net error TODO test
+//      digitalWrite(ledPin, HIGH);  
+//      delay(250);
+//      digitalWrite(ledPin, LOW);  
+//      delay(250);
+//    }
   }
 }
 
