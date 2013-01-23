@@ -1,8 +1,10 @@
 /*
-  Trigger a Restmote command touching pin-attached pencil figures.
-  Works on an Arduino Ethernet or a Ethernet Shield.
+  SmartDrawings,
+  an Arduino Client for RES(T)mote Control (http://www.restmote.com)
+  Trigger a Restmote command when something touches pin-attached pencil draws.
+  Works on Arduino Ethernet or Ethernet Shield.
   
-  When something touches a pencil drawning attached to a pin, the value returned by the function uint8_t readCapacitivePin changes. 
+  When something touches a pencil draw attached to a pin, the value returned by the function uint8_t readCapacitivePin changes. 
   If it's bigger than the costant touchedCutoff, makes the Restmote http request associated with that pin.
   
   See http://www.restmote.com/ for details.
@@ -12,17 +14,17 @@
 #include <Ethernet.h>
 
 const int ledPin = 9;                             // pin of connection led
-const int numPins = 6;                            // num of pins to connect to your drawing, ie size of capSensePins
+const int numPins = 6;                            // numpins to use
 const int capSensePins[] = {2, 3, 4, 5, 6, 7};    // pins to connect to your drawing
 const char* calls[] = {                           // calls associated to each pin
-  "/api/pc/keyboard/1", 
-  "/api/pc/keyboard/2",
-  "/api/pc/keyboard/3",
-  "/api/pc/keyboard/4",
-  "/api/pc/keyboard/5",
-  "/api/pc/keyboard/6"
+  "POST /api/pc/keyboard/1 HTTP/1.0", 
+  "POST /api/pc/keyboard/2 HTTP/1.0",
+  "POST /api/pc/keyboard/3 HTTP/1.0",
+  "POST /api/pc/keyboard/4 HTTP/1.0",
+  "POST /api/pc/keyboard/5 HTTP/1.0",
+  "POST /api/pc/keyboard/6 HTTP/1.0"
 };
-const int touchedCutoff = 60;                    //sensibility cutoff for d
+const int touchedCutoff = 60;                    //sensibility cutoff for sending commands
 const long pauseNetCalls = 0;                    //
 const boolean debug = false;                     //determines if to print in the serial line general messages
 const boolean debugNet = false;                  //determines if to print in the serial line net traffic 
@@ -123,9 +125,7 @@ void remoskoSendCommands(int index) {
   }
   if (client.connect(serverRestmote, port)) {
     Serial.println("connecting...");
-    client.print("POST "); 
     client.print(calls[index]);
-    client.println(" HTTP/1.0");
     client.println("Connection: close");
     client.println();
   }  else {
